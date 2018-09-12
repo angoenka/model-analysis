@@ -22,7 +22,7 @@ if __name__ == '__main__':
       version='0.9.2',
       packages=setuptools.find_packages(),
       install_requires=[
-          'apache-beam[gcp]==2.6.0',
+          'apache-beam[gcp]==2.8.0',
           'jupyter==1.0',
           'numpy==1.13.3',
           'protobuf==3.6.0',
