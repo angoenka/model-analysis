@@ -56,6 +56,14 @@ gsutil cp -r ./data/eval/ ./data/train/ $JOB_INPUT_PATH/
 # Preprocess the eval files
 echo Preprocessing eval data...
 rm -R -f $(pwd)/data/eval/local_chicago_taxi_output
+
+image="goenka-docker-apache.bintray.io/beam/python"
+#image="gcr.io/dataflow-build/goenka/my_beam_python"
+
+threads=100
+#sdk=--sdk_location=/usr/local/google/home/goenka/d/work/beam/beam/sdks/python/build/apache-beam-2.9.0.dev0.tar.gz
+sdk=""
+
 python preprocess.py \
   --output_dir $JOB_OUTPUT_PATH/eval/local_chicago_taxi_output \
   --outfile_prefix eval_transformed \
@@ -63,7 +71,13 @@ python preprocess.py \
   --setup_file ./setup.py \
   --experiments=beam_fn_api \
   --runner PortableRunner \
-  --job_endpoint=localhost:8099 --sdk_location=container
+  --job_endpoint=localhost:8099 \
+  --experiments=worker_threads=$threads \
+  $sdk \
+  --environment_type=DOCKER \
+  --environment_config=$image \
+  --execution_mode_for_batch=BATCH_FORCED
+
 
 # Preprocess the train files, keeping the transform functions
 echo Preprocessing train data...
@@ -75,5 +89,10 @@ python preprocess.py \
   --setup_file ./setup.py \
   --experiments=beam_fn_api \
   --runner PortableRunner \
-  --job_endpoint=localhost:8099 --sdk_location=container
+  --job_endpoint=localhost:8099 \
+  --experiments=worker_threads=$threads \
+  $sdk \
+  --environment_type=DOCKER \
+  --environment_config=$image \
+  --execution_mode_for_batch=BATCH_FORCED
 
