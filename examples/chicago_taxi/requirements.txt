@@ -1,5 +1,1 @@
 --index-url https://pypi.python.org/simple/
-
-apache_beam[gcp]==2.4.0
-
--e .
