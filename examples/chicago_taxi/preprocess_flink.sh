@@ -60,6 +60,13 @@ rm -R -f $(pwd)/data/eval/local_chicago_taxi_output
 image="goenka-docker-apache.bintray.io/beam/python"
 #image="gcr.io/dataflow-build/goenka/my_beam_python"
 
+
+#input=gs://clouddfe-goenka/chicago_taxi_data/taxi_trips_000000000000.csv
+input=$JOB_INPUT_PATH/eval/data.csv
+#input=$JOB_INPUT_PATH/eval/data_medium.csv
+#input=$JOB_INPUT_PATH/eval/data_133M.csv
+
+
 threads=100
 #sdk=--sdk_location=/usr/local/google/home/goenka/d/work/beam/beam/sdks/python/build/apache-beam-2.9.0.dev0.tar.gz
 sdk=""
@@ -67,7 +74,7 @@ sdk=""
 python preprocess.py \
   --output_dir $JOB_OUTPUT_PATH/eval/local_chicago_taxi_output \
   --outfile_prefix eval_transformed \
-  --input $JOB_INPUT_PATH/eval/data.csv \
+  --input $input \
   --setup_file ./setup.py \
   --experiments=beam_fn_api \
   --runner PortableRunner \
