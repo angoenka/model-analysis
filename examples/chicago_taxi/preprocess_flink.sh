@@ -28,6 +28,7 @@ JOB_OUTPUT_PATH=$MYBUCKET/$JOB_ID/chicago_taxi_output
 export TFT_OUTPUT_PATH=$JOB_OUTPUT_PATH/tft_output
 TEMP_PATH=$MYBUCKET/$JOB_ID/tmp/
 MYPROJECT=$(gcloud config list --format 'value(core.project)' 2>/dev/null)
+SCHEMA_PATH=./data/local_tfdv_output/schema.pbtxt
 
 echo Using GCP project: $MYPROJECT
 echo Job input path: $JOB_INPUT_PATH
@@ -57,7 +58,7 @@ gsutil cp -r ./data/eval/ ./data/train/ $JOB_INPUT_PATH/
 echo Preprocessing eval data...
 rm -R -f $(pwd)/data/eval/local_chicago_taxi_output
 
-image="goenka-docker-apache.bintray.io/beam/python"
+image="$(whoami)-docker-apache.bintray.io/beam/python"
 #image="gcr.io/dataflow-build/goenka/my_beam_python"
 
 
@@ -73,6 +74,7 @@ sdk=""
 
 python preprocess.py \
   --output_dir $JOB_OUTPUT_PATH/eval/local_chicago_taxi_output \
+  --schema_file $SCHEMA_PATH \
   --outfile_prefix eval_transformed \
   --input $input \
   --setup_file ./setup.py \
@@ -91,6 +93,7 @@ echo Preprocessing train data...
 rm -R -f $(pwd)/data/train/local_chicago_taxi_output
 python preprocess.py \
   --output_dir $JOB_OUTPUT_PATH/train/local_chicago_taxi_output \
+  --schema_file $SCHEMA_PATH \
   --outfile_prefix train_transformed \
   --input $JOB_INPUT_PATH/train/data.csv \
   --setup_file ./setup.py \
