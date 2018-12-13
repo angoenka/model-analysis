@@ -56,6 +56,9 @@ threads=100
 #sdk=--sdk_location=/usr/local/google/home/goenka/d/work/beam/beam/sdks/python/build/apache-beam-2.9.0.dev0.tar.gz
 sdk=""
 
+#extra_args="--retain_docker_containers=true"
+extra_args=""
+
 
 # Compute stats and generate a schema based on the stats.
 python tfdv_analyze_and_validate.py \
@@ -69,6 +72,7 @@ python tfdv_analyze_and_validate.py \
   --job_endpoint=localhost:8099 \
   --experiments=worker_threads=$threads \
   $sdk \
+  $extra_args \
   --environment_type=DOCKER \
   --environment_config=$image
 
@@ -89,6 +93,7 @@ python tfdv_analyze_and_validate.py \
   --job_endpoint=localhost:8099 \
   --experiments=worker_threads=$threads \
   $sdk \
+  $extra_args \
   --environment_type=DOCKER \
   --environment_config=$image
 
@@ -97,4 +102,8 @@ echo
 echo
 echo "  TFDV_OUTPUT_PATH=$TFDV_OUTPUT_PATH"
 echo "  SCHEMA_PATH=$SCHEMA_PATH"
+mkdir -p data/flink_tfdv_output
+# move data to gcs
+echo Downloading data from GCS
+gsutil cp -r $TFDV_OUTPUT_PATH/tfdv_output/* data/flink_tfdv_output/
 echo
