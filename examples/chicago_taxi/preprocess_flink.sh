@@ -59,7 +59,7 @@ echo Preprocessing eval data...
 rm -R -f $(pwd)/data/eval/local_chicago_taxi_output
 
 #image="$(whoami)-docker-apache.bintray.io/beam/python"
-image="gcr.io/dataflow-build/goenka/my_beam_python"
+image="gcr.io/dataflow-build/goenka/beam_fnapi_python"
 
 
 #input=gs://clouddfe-goenka/chicago_taxi_data/taxi_trips_000000000000.csv
@@ -72,6 +72,9 @@ threads=100
 #sdk=--sdk_location=/usr/local/google/home/goenka/d/work/beam/beam/sdks/python/build/apache-beam-2.9.0.dev0.tar.gz
 sdk=""
 
+#extra_args="--retain_docker_containers=true"
+extra_args=""
+
 python preprocess.py \
   --output_dir $JOB_OUTPUT_PATH/eval/local_chicago_taxi_output \
   --schema_file $SCHEMA_PATH \
@@ -83,6 +86,7 @@ python preprocess.py \
   --job_endpoint=localhost:8099 \
   --experiments=worker_threads=$threads \
   $sdk \
+  $extra_args \
   --environment_type=DOCKER \
   --environment_config=$image \
   --execution_mode_for_batch=BATCH_FORCED
@@ -102,6 +106,7 @@ python preprocess.py \
   --job_endpoint=localhost:8099 \
   --experiments=worker_threads=$threads \
   $sdk \
+  $extra_args \
   --environment_type=DOCKER \
   --environment_config=$image \
   --execution_mode_for_batch=BATCH_FORCED

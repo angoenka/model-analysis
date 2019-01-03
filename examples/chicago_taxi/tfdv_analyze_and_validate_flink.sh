@@ -41,8 +41,8 @@ echo TFDV output path: $TFDV_OUTPUT_PATH
 echo Uploading data to GCS
 gsutil cp -r ./data/eval/ ./data/train/ $JOB_INPUT_PATH/
 
-image="goenka-docker-apache.bintray.io/beam/python"
-#image="gcr.io/dataflow-build/goenka/my_beam_python"
+#image="goenka-docker-apache.bintray.io/beam/python"
+image="gcr.io/dataflow-build/goenka/beam_fnapi_python"
 
 #input=bigquery-public-data.chicago_taxi_trips.taxi_trips
 #input=gs://clouddfe-goenka/chicago_taxi_data/taxi_trips_000000000000.csv
