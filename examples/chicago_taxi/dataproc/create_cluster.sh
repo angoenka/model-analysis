@@ -3,14 +3,15 @@
 #set -x
 set -e
 USER=`whoami`
-CLUSTER_NAME="$USER-flink-155"
+CLUSTER_NAME="$USER-flink-156"
 NUM_WORKERS=2
-FLINK_VERSION=1.5.5
+FLINK_VERSION=1.5.6
 WORK_DIR="gs://clouddfe-$USER/tmp"
 CLOUD_WORKER_IMAGE="gcr.io/dataflow-build/$USER/beam_fnapi_python:latest"
 TASK_MANAGER_MEM=10240
-FLINK_LOCAL_PORT=8077
+FLINK_LOCAL_PORT=8081
 TASK_MANAGER_SLOTS=1
+DATAPROC_VERSION=1.2
 
 MASTER_NAME="$CLUSTER_NAME-m"
 FLINK_INIT="$WORK_DIR/flink/flink-init-dataproc.sh"
@@ -117,7 +118,7 @@ function start_tunnel() {
 
 function create_cluster() {
   echo "Starting dataproc cluster."
-  gcloud dataproc clusters create $CLUSTER_NAME --num-workers=$NUM_WORKERS --initialization-actions $FLINK_INIT,$DOCKER_INIT --metadata flink_version=$FLINK_VERSION,work_dir=$WORK_DIR/flink
+  gcloud dataproc clusters create $CLUSTER_NAME --num-workers=$NUM_WORKERS --initialization-actions $FLINK_INIT,$DOCKER_INIT --metadata flink_version=$FLINK_VERSION,work_dir=$WORK_DIR/flink --image-version=$DATAPROC_VERSION
   echo "Sleeping for 30 sec"
   sleep 30s
 }

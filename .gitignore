@@ -43,6 +43,10 @@ sdks/python/README.md
 sdks/python/apache_beam/portability/api/*pb2*.*
 sdks/python/nosetests.xml
 
+# Igonore data files
+**/*data/
+**/data/
+
 # Ignore IntelliJ files.
 **/.idea/**/*
 **/*.iml
