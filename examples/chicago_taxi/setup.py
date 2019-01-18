@@ -32,5 +32,5 @@ if __name__ == '__main__':
           'tensorflow-model-analysis==0.11.0',
           'tensorflow-serving-api==1.11.0',
           'tensorflow-transform==0.11.0',
-        'grpcio==1.17.1',
+          'grpcio==1.17.1',
       ])

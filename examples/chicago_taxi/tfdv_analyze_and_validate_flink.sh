@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 set -u
+set -x
 
 echo Starting distributed TFDV stats computation and schema generation...
 
-if [ -z "$MYBUCKET" ]; then
+if [ "${MYBUCKET:-unset}" = "unset" ]; then
   echo MYBUCKET was not set
   echo Please set MYBUCKET to your GCP bucket using: export MYBUCKET=gs://bucket
   exit 1
@@ -45,19 +46,34 @@ gsutil cp -r ./data/eval/ ./data/train/ $JOB_INPUT_PATH/
 image="gcr.io/dataflow-build/goenka/beam_fnapi_python"
 
 #input=bigquery-public-data.chicago_taxi_trips.taxi_trips
-#input=gs://clouddfe-goenka/chicago_taxi_data/taxi_trips_000000000000.csv
 eval_input=$JOB_INPUT_PATH/eval/data.csv
-#input=$JOB_INPUT_PATH/eval/data_medium.csv
-#input=$JOB_INPUT_PATH/eval/data_133M.csv
 
 train_input=$JOB_INPUT_PATH/train/data.csv
 
 threads=100
-#sdk=--sdk_location=/usr/local/google/home/goenka/d/work/beam/beam/sdks/python/build/apache-beam-2.9.0.dev0.tar.gz
 sdk=""
 
-#extra_args="--retain_docker_containers=true"
 extra_args=""
+#extra_args="--retain_docker_containers=true"
+
+environment_type=DOCKER
+environment_config=$image
+
+if [ "${BEAM_SDK:-unset}" != "unset" ]; then
+  sdk="--sdk_location==$BEAM_SDK"
+fi
+
+if [ "${EXTRA_ARGS:-unset}" != "unset" ]; then
+  extra_args=$EXTRA_ARGS
+fi
+
+if [ "${ENVIRONMENT_TYPE:-unset}" != "unset" ]; then
+  environment_type=$ENVIRONMENT_TYPE
+fi
+
+if [ "${ENVIRONMENT_CONFIG:-unset}" != "unset" ]; then
+  environment_config=$ENVIRONMENT_CONFIG
+fi
 
 
 # Compute stats and generate a schema based on the stats.
@@ -73,8 +89,8 @@ python tfdv_analyze_and_validate.py \
   --experiments=worker_threads=$threads \
   $sdk \
   $extra_args \
-  --environment_type=DOCKER \
-  --environment_config=$image
+  --environment_type=$environment_type \
+  --environment_config="$environment_config"
 
 EVAL_JOB_ID=$JOB_ID-eval
 
@@ -94,8 +110,8 @@ python tfdv_analyze_and_validate.py \
   --experiments=worker_threads=$threads \
   $sdk \
   $extra_args \
-  --environment_type=DOCKER \
-  --environment_config=$image
+  --environment_type=$environment_type \
+  --environment_config="$environment_config"
 
 
 echo
